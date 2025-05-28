@@ -75,7 +75,7 @@ The scan identified a total of **9 alerts**, including vulnerabilities related t
 
 | **Alert**                                    | **Risk Level** | **Description**                                                                 | **CWE ID**  |
 |----------------------------------------------|----------------|---------------------------------------------------------------------------------|-------------|
-| Absence of Anti-CSRF Tokens                  | Medium         | No CSRF protection implemented in forms.                                      | CWE-352     |
+| Absence of Anti-CSRF Tokens                  | Medium         | No Anti-CSRF tokens were found in a HTML submission form.                      | CWE-352     |
 | Content Security Policy (CSP) Not Set        | Medium         | Missing header may lead to potential XSS vulnerabilities.                      | CWE-693     |
 | Cookie Without HttpOnly Flag                 | Low            | Cookies can be accessed through client-side scripts.                           | CWE-1004    |
 | Cookie Without Secure Flag                   | Low            | Cookies may be transmitted in cleartext over HTTP.                             | CWE-614     |
