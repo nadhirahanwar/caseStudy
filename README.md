@@ -139,7 +139,4 @@ The use of OWASP ZAP has effectively identified several security vulnerabilities
 - [Common Weakness Enumeration (CWE)](https://cwe.mitre.org/)
 - [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
 
----
-
-*This case study was conducted as part of the INFO 4345 course assignment.*
 
