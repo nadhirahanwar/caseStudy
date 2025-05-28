@@ -76,7 +76,7 @@ The scan identified a total of **9 alerts**, including vulnerabilities related t
 | **Alert**                                    | **Risk Level** | **Description**                                                                 | **CWE ID**  |
 |----------------------------------------------|----------------|---------------------------------------------------------------------------------|-------------|
 | Absence of Anti-CSRF Tokens                  | Medium         | No Anti-CSRF tokens were found in a HTML submission form.                      | CWE-352     |
-| Content Security Policy (CSP) Not Set        | Medium         | Missing header may lead to potential XSS vulnerabilities.                      | CWE-693     |
+| Content Security Policy (CSP) Not Set        | Medium         | Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks                     | CWE-693     |
 | Cookie Without HttpOnly Flag                 | Low            | Cookies can be accessed through client-side scripts.                           | CWE-1004    |
 | Cookie Without Secure Flag                   | Low            | Cookies may be transmitted in cleartext over HTTP.                             | CWE-614     |
 | Cookie Without SameSite Attribute            | Low            | Cookies are vulnerable to cross-site request forgery.                          | CWE-1275    |
