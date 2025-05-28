@@ -4,23 +4,6 @@ This document presents a detailed case study of the vulnerability assessment per
 
 ---
 
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Objectives](#objectives)
-- [Tools and Environment](#tools-and-environment)
-- [Methodology](#methodology)
-  - [Configuration](#configuration)
-  - [Scanning Process](#scanning-process)
-- [Findings](#findings)
-  - [Alert Summary](#alert-summary)
-  - [Detailed Findings](#detailed-findings)
-- [Recommendations and Mitigations](#recommendations-and-mitigations)
-- [Conclusion](#conclusion)
-- [References](#references)
-
----
-
 ## Introduction
 
 The IIUM Human Resource Information System (HURIS) is a critical application used in the academic environment for managing HR-related tasks. This case study focuses on identifying potential security vulnerabilities using the OWASP ZAP tool, with the aim of enhancing the security posture of the application.
@@ -71,9 +54,8 @@ The IIUM Human Resource Information System (HURIS) is a critical application use
 1. **Target URLs**:  
    The primary pages for the scan included:
    - [https://huris.iium.edu.my/](https://huris.iium.edu.my/)
-   - [https://huris.iium.edu.my/recruit](https://huris.iium.edu.my/recruit)
    - [https://huris.iium.edu.my/online](https://huris.iium.edu.my/online)
-   - [https://huris.iium.edu.my/recruitment](https://huris.iium.edu.my/recruitment)
+   
 
 2. **Automated Scanning**:  
    - Used ZAP's "Quick Start" feature to run an automated scan against the target URLs.
