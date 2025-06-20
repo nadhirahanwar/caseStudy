@@ -142,6 +142,209 @@ The use of OWASP ZAP has effectively identified several security vulnerabilities
 # Web Application Vulnerability Scan Report
 
 **Tool Used:** OWASP ZAP  
+**Date of Scan:** 2025-06-21
+**Scanned By:** Irdeena Zahierah Binti Zukipeli
+**Target Application:** https://huris.iium.edu.my/irecruit  
+**Scan Type:** Passive 
+**Scan Duration:** 12:15 AM - 1:30 AM
+
+---
+
+## 1. Executive Summary
+
+| Metric                         | Value            |
+|-------------------------------|------------------|
+| Total Issues Identified       | 15    |
+| Critical Issues               | 0          |
+| High-Risk Issues              | 0         |
+| Medium-Risk Issues            | 5          |
+| Low-Risk/Informational Issues | 10         |
+| Remediation Status            | Complete |
+
+**Key Takeaway:**  
+The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority alerts. The absence of CSRF tokens, missing CSP Header, insecure cookie flags, missing security headers and server information disclosure were among the most notable vulnerabilities. Immediate attention is required for CSRF mitigation and secure session handling. No critical issues were founds.
+
+---
+
+## 2. Summary of Findings
+
+| Risk Level | Number of Issues | Example Vulnerability          |
+|------------|------------------|--------------------------------|
+| Critical   | 0              |   |
+| High       | 0              |  |
+| Medium     | 5              | Absence of Anti-CSRF Tokens, CSP Header not set, Format String Error, Missing Anti-clickjacking Header, Session ID in URL Rewrite       |
+| Low        | 5              | Cookie without secure flag, Cookie without SameSite attribute, Server leaks version information via "Server" HTTP Response Header Field, Strict-Transport-Security Header not set, X-Content-Type-Options Header missing   |
+| Info       | 5          | Authentication request identified, information disclosure-suspicious comments, modern web application, session management response identified, user agent fuzzer |
+
+---
+
+## 3. Detailed Findings
+
+### 3.1 Absence of Anti-CSRF Tokens
+
+- **Severity:** Medium  
+- **Description:**  
+  No Anti-CSRF tokens were found in a HTML submission form
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/irecruit/login;jsessionid=678E633A71FD51531C29C2DCA137A6A4
+  - https://huris.iium.edu.my/irecruit/login?login_error=t
+
+- **Business Impact:**  
+  Attackers could trick authenticated users into executing unwanted actions without their consent
+
+- **OWASP Reference:**  
+ - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+ - https://cwe.mitre.org/data/definitions/352.html
+
+- **Recommendation:**  
+  Implement CSRF protection by including tokens in all forms and validating them on the server side
+
+- **Prevention Strategy:**  
+  - Generate unique tokens per session and include them in all POST requests.
+  - Use frameworks like anti-CSRF packages such as the OWASP CSRFGuard
+
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+
+---
+### 3.2 Content Security Policy (CSP) Header Not Set
+
+- **Severity:** Medium  
+- **Description:**  
+  Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware.
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/irecruit/login;jsessionid=678E633A71FD51531C29C2DCA137A6A4
+  - https://huris.iium.edu.my/irecruit/login?login_error=t
+  - https://huris.iium.edu.my/robots.txt
+  - https://huris.iium.edu.my/sitemap.xml
+
+- **Business Impact:**  
+  ...
+
+- **OWASP Reference:**  
+ - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+ - https://www.w3.org/TR/CSP/
+
+- **Recommendation:**  
+  Ensure that web server, application server, load balancer are configured to set the Content-Security-Policy header, which help reduce XSS risk.
+
+- **Prevention Strategy:**  
+  - ............
+
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+
+---
+### 3.3 Session ID in URL Rewrite
+
+- **Severity:** Medium  
+- **Description:**  
+  URL rewrite is used to track user session ID. The session ID may be disclosed via cross-site referer header. In addition, the session ID might be stored in browser history or server logs.
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/irecruit/login;jsessionid=678E633A71FD51531C29C2DCA137A6A4
+  - https://huris.iium.edu.my/irecruit/resources/styles/font-awesome/css/font-awesome.min.css;jsessionid=678E633A71FD51531C29C2DCA137A6A4
+    
+- **Business Impact:**  
+  ...
+
+- **OWASP Reference:**  
+ - https://seclists.org/webappsec/2002/q4/111
+
+- **Recommendation:**  
+  For secure content, put session ID in a cookie. To be even more secure consider using a combination of cookie and URL rewrite.
+
+- **Prevention Strategy:**  
+  - Use cookie-based session management instead of URL rewriting
+
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+---
+### 3.4 Cookie without Secure Flag
+
+- **Severity:** Low  
+- **Description:**  
+  A cookie has been set without the secure flag, which means that the cookie can be accessed via unencrypted connections
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/robots.txt
+  - https://huris.iium.edu.my/sitemap.xml
+    
+- **Business Impact:**  
+  ...
+
+- **OWASP Reference:**  
+ - https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes.html
+
+- **Recommendation:**  
+  Whenever a cookie contains sensitive information or is a session token, then it should always be passed using an encrypted channel. Ensure that the secure flag is set for cookies containing such sensitive information.
+
+- **Prevention Strategy:**  
+  - ..
+
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+---
+### 3.5 Information Disclosure - Suspicious Comments
+
+- **Severity:** Informational  
+- **Description:**  
+  The response appears to contain suspicious comments which may help an attacker
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/irecruit
+  - https://huris.iium.edu.my/irecruit/js/dojo/dojo/dojo.js
+  - https://huris.iium.edu.my/irecruit/js/idle.js
+  - https://huris.iium.edu.my/irecruit/resources/spring/Spring-Dojo.js
+    
+- **Business Impact:**  
+  ...
+
+- **Recommendation:**  
+ Remove all comments that return information that may help an attacker and fix any underlying problems they refer to
+
+- **Prevention Strategy:**  
+  - ..
+
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+---
+## 4. Recommendations & Next Steps
+
+- Apply CSRF protection on all forms using secure token validation.
+- Secure cookies by enabling Secure, HttpOnly, and SameSite attributes.
+- Disable URL-based session IDs and switch to secure cookies for session tracking.
+- Add missing headers (CSP, HSTS, X-Frame-Options) to enhance browser-level security.
+- Schedule a retest after remediation and implement regular monthly scans.
+
+---
+
+## Appendix (Optional)
+Configuration details : 
+**3.1 Absence of Anti-CSRF Tokens** 
+![image](https://github.com/user-attachments/assets/3d3b338b-c27f-45f4-baa3-1760f2280b83)
+**3.2 Content Security Policy (CSP) Header Not Set** 
+![image](https://github.com/user-attachments/assets/9c58447c-c9d6-43cf-9201-3cf94e17399e)
+**3.3 Session ID in URL Rewrite** 
+![image](https://github.com/user-attachments/assets/b15b1917-04bf-4b6e-a343-8e6a0899633d)
+**3.4 Cookie without Secure Flag** 
+![image](https://github.com/user-attachments/assets/b20efc1c-1a1e-40ac-89df-d0757056b9ce)
+**3.5 Information Disclosure - Suspicious Comments** 
+![image](https://github.com/user-attachments/assets/44e56dc5-8b2c-4a55-bb48-67f2c7bc32b5)
+
+---
+
+**Prepared by:**  
+Irdeena Zahierah  
+Student Kuliyyah of Information Communication and Technology 
+irdeenazahierah03@gmail.com 
+21/6/2025
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Web Application Vulnerability Scan Report
+
+**Tool Used:** OWASP ZAP  
 **Date of Scan:** [YYYY-MM-DD]  
 **Scanned By:** [Name/Team]  
 **Target Application:** [Application Name or URL]  
@@ -236,5 +439,4 @@ The use of OWASP ZAP has effectively identified several security vulnerabilities
 [Your Role / Department]  
 [Email / Contact]  
 [Date]
-
 
