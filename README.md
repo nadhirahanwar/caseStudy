@@ -210,7 +210,7 @@ irdeenazahierah03@gmail.com
 **Scanned By:** HUSNA NADHIRAH BINTI KHAIRUL ANWAR  
 **Target Application:** https://huris.iium.edu.my/online 
 **Scan Type:** PASSIVE SCAN 
-**Scan Duration:** 9:47 AM
+**Scan Duration:** 9:47 AM - 10:38 AM
 
 ---
 
