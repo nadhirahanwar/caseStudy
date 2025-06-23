@@ -334,7 +334,7 @@ The scan detected 9 issues, with 2 medium, 5 low and 2 informational priority al
   - Combine with other flags like Secure and SameSite for stronger protection.
   - Conduct regular security audits to check for missing cookie flags.
   - Prevent XSS attacks to further reduce the risk of cookie theft.
-  - 
+    
 > **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
 >
@@ -422,7 +422,7 @@ The scan detected 9 issues, with 2 medium, 5 low and 2 informational priority al
 **3.3 Cookie No HttpOnly FLag**
 ![image](https://github.com/user-attachments/assets/da22618f-f741-453d-85f7-4167c5ec03e8)
 
-**3.4 Cookie Without Secure Flag **
+**3.4 Cookie Without Secure Flag**
 ![image](https://github.com/user-attachments/assets/e6dcc764-dce7-44ec-9a2e-ed302c67fca1)
 
 **3.5 Server Leaks Version Information via "Server" HTTP Response Header Field**
