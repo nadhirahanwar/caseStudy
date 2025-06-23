@@ -1,144 +1,4 @@
 # Case Study: Vulnerability Assessment of IIUM HURIS Using OWASP ZAP
-
-This document presents a detailed case study of the vulnerability assessment performed on the IIUM Human Resource Information System (HURIS) using OWASP ZAP. The study outlines the tools used, the methodology followed, the vulnerabilities identified, and recommendations for mitigation.
-
----
-
-## Introduction
-
-The IIUM Human Resource Information System (HURIS) is a critical application used in the academic environment for managing HR-related tasks. This case study focuses on identifying potential security vulnerabilities using the OWASP ZAP tool, with the aim of enhancing the security posture of the application.
-
----
-
-## Objectives
-
-- To perform an automated and manual vulnerability scan on HURIS.
-- To identify potential security issues that may affect confidentiality, integrity, and availability.
-- To provide recommendations for mitigating the identified vulnerabilities.
-
----
-
-## Tools and Environment
-
-- **OWASP ZAP** – Open-source web application security scanning tool.
-- **Browser (Firefox/Chrome)** – Configured to use OWASP ZAP as a proxy.
-- **Operating System** – Windows/Linux/Mac (configuration details provided in the methodology).
-
----
-
-## Methodology
-
-### Configuration
-
-1. **OWASP ZAP Installation**:  
-   Download and install OWASP ZAP from [https://www.zaproxy.org/download/](https://www.zaproxy.org/download/).
-
-2. **Browser Proxy Setup**:  
-   Configure your browser to use `localhost` as the proxy server with port `8080`.
-   
-   - **Firefox**:  
-     - Navigate to Settings → Network Settings → Manual Proxy Configuration.
-     - Input `localhost` for HTTP Proxy and set port to `8080`.
-     - Ensure "Use this proxy server for all protocols" is checked.
-   
-   - **Chrome**:  
-     Chrome uses system proxy settings, so set the proxy in your OS’s settings accordingly.
-
-3. **Certificate Installation**:  
-   Install the ZAP root certificate in your browser to avoid HTTPS warnings:
-   - Download the certificate from `http://zap`.
-   - Import it into your browser under the Certificates section and trust it for identifying websites.
-
-### Scanning Process
-
-1. **Target URLs**:  
-   The primary pages for the scan included:
-   - [https://huris.iium.edu.my/](https://huris.iium.edu.my/)
-   - [https://huris.iium.edu.my/online](https://huris.iium.edu.my/online)
-   
-
-2. **Automated Scanning**:  
-   - Used ZAP's "Quick Start" feature to run an automated scan against the target URLs.
-   - Monitored for alerts in the “Alerts” tab.
-
-3. **Manual Exploration**:  
-   - Navigated through the application manually with the proxy enabled to ensure all areas were covered.
-   - This assisted in revealing any pages or parameters not captured by the automated scan.
-
----
-
-## Findings
-
-### Alert Summary
-
-The scan identified a total of **9 alerts**, including vulnerabilities related to session management, cookie security, and missing security headers. A summary of the critical alerts is shown below:
-
-| **Alert**                                    | **Risk Level** | **Description**                                                                 | **CWE ID**  |
-|----------------------------------------------|----------------|---------------------------------------------------------------------------------|-------------|
-| Absence of Anti-CSRF Tokens                  | Medium         | No Anti-CSRF tokens were found in a HTML submission form.                      | CWE-352     |
-| Content Security Policy (CSP) Not Set        | Medium         | Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware.                    | CWE-693     |
-| Cookie Without HttpOnly Flag                 | Low            | A cookie has been set without the HttpOnly flag, which means that the cookie can be accessed by JavaScript. If a malicious script can be run on this page then the cookie will be accessible and can be transmitted to another site. If this is a session cookie then session hijacking may be possible.                           | CWE-1004    |
-| Cookie Without Secure Flag                   | Low            | A cookie has been set without the secure flag, which means that the cookie can be accessed via unencrypted connections.                            | CWE-614     |
-| Cookie Without SameSite Attribute            | Low            | A cookie has been set without the SameSite attribute, which means that the cookie can be sent as a result of a 'cross-site' request. The SameSite attribute is an effective counter measure to cross-site request forgery, cross-site script inclusion, and timing attacks.                         | CWE-1275    |
-| Server Leaks Version Information             | Low            | The web/application server is leaking version information via the "Server" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to.               | CWE-200     |
-| Strict-Transport-Security Header Not Set     | Medium         | HTTP Strict Transport Security (HSTS) is a web security policy mechanism whereby a web server declares that complying user agents (such as a web browser) are to interact with it using only secure HTTPS connections (i.e. HTTP layered over TLS/SSL). HSTS is an IETF standards track protocol and is specified in RFC 6797.           | CWE-319     |
-| Session Management Response Identified       | Informational           | The given response has been identified as containing a session management token. The 'Other Info' field contains a set of header tokens that can be used in the Header Based Session Management Method. If the request is in a context which has a Session Management Method set to "Auto-Detect" then this rule will change the session management to use the tokens identified.   | CWE-384     |
-| User Agent Fuzzer                            | Informational           | Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.                            | N/A         |
-
-### Detailed Findings
-
-#### 1. Absence of Anti-CSRF Tokens
-- **Risk Level**: Medium  
-- **Issue**: Forms across the application lack anti-CSRF tokens, leaving authenticated sessions vulnerable to CSRF attacks.  
-- **Recommendation**: Implement CSRF tokens in form submissions and validate them on the server-side.
-
-#### 2. Missing Content Security Policy (CSP)
-- **Risk Level**: Medium  
-- **Issue**: Without CSP, the application is more susceptible to cross-site scripting (XSS) attacks.  
-- **Recommendation**: Define and enforce a robust Content Security Policy.
-
-#### 3. Cookie Configuration Issues
-- **Risk Level**: Low  
-- **Issues**:
-  - Cookies missing the HttpOnly flag can be accessed via JavaScript.
-  - Cookies without the Secure flag may be transmitted over insecure channels.
-  - Cookies lacking the SameSite attribute can be exploited via CSRF.
-- **Recommendation**: Ensure all cookies are configured with HttpOnly, Secure, and SameSite attributes appropriately.
-
-#### 4. Information Disclosure
-- **Risk Level**: Low  
-- **Issue**: The web server leaks version information in the Server header.  
-- **Recommendation**: Hide or modify server headers to prevent disclosing internal details.
-
-#### 5. Strict-Transport-Security (HSTS) Absence
-- **Risk Level**: Medium  
-- **Issue**: Without HSTS, users may be vulnerable to protocol downgrade attacks.  
-- **Recommendation**: Configure the web server with HSTS headers to enforce HTTPS.
-
----
-
-## Recommendations and Mitigations
-
-- **Enhance CSRF Protections**: Integrate anti-CSRF tokens into all forms and perform token validation on the server.
-- **Implement CSP and HSTS**: Establish security headers (CSP, HSTS) to reduce the risk of XSS and MITM attacks.
-- **Improve Cookie Security**: Set all cookies with the appropriate flags, including HttpOnly, Secure, and SameSite.
-- **Minimize Information Disclosure**: Modify server configurations to suppress version information.
-- **Regular Security Assessments**: Conduct periodic vulnerability scans and manual reviews to maintain a robust security posture.
-
----
-
-## Conclusion
-
-The use of OWASP ZAP has effectively identified several security vulnerabilities in the HURIS application. Although some alerts are low risk or informational, critical findings such as the absence of CSRF protection and lack of security headers must be promptly addressed. The remediation actions suggested in this report will help improve the overall security of the application.
-
----
-
-## References
-
-- [OWASP ZAP Documentation](https://www.zaproxy.org/getting-started/)
-- [Common Weakness Enumeration (CWE)](https://cwe.mitre.org/)
-- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
-
 # Web Application Vulnerability Scan Report
 
 **Tool Used:** OWASP ZAP  
@@ -341,15 +201,16 @@ Irdeena Zahierah
 Student Kuliyyah of Information Communication and Technology 
 irdeenazahierah03@gmail.com 
 21/6/2025
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Web Application Vulnerability Scan Report
 
 **Tool Used:** OWASP ZAP  
-**Date of Scan:** [YYYY-MM-DD]  
-**Scanned By:** [Name/Team]  
-**Target Application:** [Application Name or URL]  
-**Scan Type:** [Active / Passive]  
-**Scan Duration:** [Start Time – End Time]
+**Date of Scan:** 2025-06-23  
+**Scanned By:** HUSNA NADHIRAH BINTI KHAIRUL ANWAR  
+**Target Application:** https://huris.iium.edu.my/online 
+**Scan Type:** PASSIVE SCAN 
+**Scan Duration:** 9:47 AM
 
 ---
 
@@ -357,15 +218,15 @@ irdeenazahierah03@gmail.com
 
 | Metric                         | Value            |
 |-------------------------------|------------------|
-| Total Issues Identified       | [Total Count]    |
-| Critical Issues               | [Count]          |
-| High-Risk Issues              | [Count]          |
-| Medium-Risk Issues            | [Count]          |
-| Low-Risk/Informational Issues | [Count]          |
-| Remediation Status            | [Pending/In Progress/Complete] |
+| Total Issues Identified       | 9   |
+| Critical Issues               | 0         |
+| High-Risk Issues              | 0         |
+| Medium-Risk Issues            | 2          |
+| Low-Risk/Informational Issues | 7          |
+| Remediation Status            | Complete |
 
 **Key Takeaway:**  
-[Brief overview: e.g., "The scan identified 2 high-risk vulnerabilities that require immediate attention. No critical issues were found."]
+The scan detected 9 issues, with 2 medium, 5 low and 2 informational priority alerts. The absence of CSRF tokens, CSP Header not set, insecure cookie flags, cookie without SameSite attribute, server information disclosure and Strict-Transport-Security Header not set were among the most notable vulnerabilities. Immediate attention is required for CSRF mitigation and CSP Header. No critical issues were founds.
 
 ---
 
@@ -373,70 +234,206 @@ irdeenazahierah03@gmail.com
 
 | Risk Level | Number of Issues | Example Vulnerability          |
 |------------|------------------|--------------------------------|
-| Critical   | [Count]          | [e.g., Remote Code Execution]  |
-| High       | [Count]          | [e.g., SQL Injection]          |
-| Medium     | [Count]          | [e.g., Insecure Cookies]       |
-| Low        | [Count]          | [e.g., Missing HTTP Headers]   |
-| Info       | [Count]          | [e.g., Server Version Exposed] |
+| Critical   | 0          | -  |
+| High       | 0          | -         |
+| Medium     | 2          | Absence of Anti-CSRF Tokens, CSP Header Not Set      |
+| Low        | 5          | Cookie No HttpOnly Flag, Cookie Without Secure Flag, Cookie without SameSite Attribute, Server Lekas Version Information, Strict-Transport-Security Header Not Set  |
+| Info       | 2         | Session Management Response Identified, User Agent Fuzzer |
 
 ---
 
 ## 3. Detailed Findings
 
-### [Vulnerability Title 1]
+### 3.1 Absence of Anti-CSRF Tokens
 
-- **Severity:** [Critical / High / Medium / Low / Info]  
+- **Severity:** Medium 
 - **Description:**  
-  [Short explanation of the issue]
+  No Anti-CSRF tokens were found in a HTML submission form.
 
 - **Affected URLs:**  
-  - [https://example.com/path1](#)
-  - [https://example.com/path2](#)
+  - https://huris.iium.edu.my/online
 
 - **Business Impact:**  
-  [Explain potential consequence in non-technical terms.]
+  Attackers could trick authenticated users into executing unwanted actions without their consent.
 
 - **OWASP Reference:**  
-  [https://owasp.org/www-project-top-ten/](#)
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+  - https://cwe.mitre.org/data/definitions/352.html
 
 - **Recommendation:**  
-  [Suggested fix, e.g., "Validate user inputs using allow-lists."]
+  Implement CSRF protection by including tokens in all forms and validating them on the server side.
 
 - **Prevention Strategy:**  
-  - Enforce input validation.
-  - Use secure HTTP headers.
-  - Apply regular code reviews and testing.
+  - Generate unique tokens per session and include them in all POST requests.
+  - Use frameworks like anti-CSRF packages such as the OWASP CSRFGuard
 
-> **Responsible Team:** [e.g., DevOps]  
+> **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
 
 ---
 
-(Repeat for each major vulnerability)
+### 3.2 Content Security Policy (CSP) Header Not Set
+
+- **Severity:** Medium 
+- **Description:**  
+  Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware.
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/online
+  - https://huris.iium.edu.my/robots.txt
+  - https://huris.iium.edu.my/sitemap.xml
+
+- **Business Impact:**  
+  Site is more vulnerable to attacks like XSS and data injection. This can lead to data theft, session hijacking, defacement, or malware distribution. For a university HR system, it risks exposing sensitive staff or student data, damaging reputation, and violating data protection laws.
+
+- **OWASP Reference:**  
+  - https://developer.mozilla.org/en-US/docs/Web/Security/CSP/Introducing_Content_Security_Policy
+  - https://cwe.mitre.org/data/definitions/352.html
+  - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+  - https://www.w3.org/TR/CSP/
+  - https://w3c.github.io/webappsec-csp/
+  - https://web.dev/articles/csp
+  - https://caniuse.com/#feat=contentsecuritypolicy
+  - https://content-security-policy.com/)
+
+- **Recommendation:**  
+  Implement a strong Content Security Policy (CSP) header on all web pages to control which resources (scripts, styles, images, etc.) can be loaded by the browser.
+
+- **Prevention Strategy:**  
+  - Set CSP Headers via web server (Apache/Nginx) or in application code.
+  - Avoid inline scripts and eval() to simplify CSP rules.
+  - Regularly test CSP using tools like Google CSP Evaluator.
+  - Combine CSP with other headers like X-XSS-Protection and X-Content-Type-Options for layered security.
+  - Monitor for violations using CSP report URIs to detect and fix issues proactively.
+
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
 
 ---
 
+### 3.3 Cookie No HttpOnly FLag
+
+- **Severity:** Low
+- **Description:**  
+  A cookie has been set without the HttpOnly flag, which means that the cookie can be accessed by JavaScript. If a malicious script can be run on this page then the cookie will be accessible and can be transmitted to another site. If this is a session cookie then session hijacking may be possible.
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/online
+
+- **Business Impact:**  
+  Without the HttpOnly flag, cookies (especially session cookies) are exposed to client-side scripts. If an attacker exploits a Cross-Site Scripting (XSS) vulnerability, they could steal session cookies, leading to session hijacking, unauthorized access, and data breaches. This compromises user trust and may result in reputation damage and non-compliance with data protection regulations.
+
+- **OWASP Reference:**  
+  - https://owasp.org/www-community/HttpOnly
+
+- **Recommendation:**  
+  Set the HttpOnly flag on all sensitive cookies, especially session cookies, to prevent access via JavaScript.
+
+- **Prevention Strategy:**  
+  - Always set HttpOnly on authentication/session cookies.
+  - Combine with other flags like Secure and SameSite for stronger protection.
+  - Conduct regular security audits to check for missing cookie flags.
+  - Prevent XSS attacks to further reduce the risk of cookie theft.
+  - 
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+>
+---
+
+### 3.4 Cookie Without Secure Flag 
+- **Severity:** Low
+- **Description:**  
+  A cookie has been set without the secure flag, which means that the cookie can be accessed via unencrypted connections.
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/robots.txt
+  - https://huris.iium.edu.my/sitemap.xml
+
+- **Business Impact:**  
+  Cookies—especially session cookies—can be transmitted over HTTP, making them vulnerable to interception by attackers via packet sniffing or man-in-the-middle (MITM) attacks. This may lead to session hijacking, unauthorized access, and data breaches, resulting in loss of user trust, reputation damage, and potential non-compliance with data privacy regulations.
+
+- **OWASP Reference:**  
+  - https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes.html
+
+- **Recommendation:**  
+  Set the Secure flag on all cookies to ensure they are only transmitted over HTTPS connections.
+
+- **Prevention Strategy:**  
+  - Enforce HTTPS across the entire website using HTTP Strict Transport Security (HSTS).
+  - Always set the Secure flag for all sensitive cookies.
+  - Test cookies in browser developer tools to confirm flag settings.
+  - Include secure cookie settings in both application and server configurations.
+    
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+---
+
+### 3.5 Server Leaks Version Information via "Server" HTTP Response Header Field
+- **Severity:** Low
+- **Description:**  
+  The web/application server is leaking version information via the "Server" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to..
+
+- **Affected URLs:**  
+  - https://huris.iium.edu.my/online
+  - https://huris.iium.edu.my/online/
+  - https://huris.iium.edu.my/robots.txt
+  - https://huris.iium.edu.my/sitemap.xml
+
+- **Business Impact:**  
+  Exposing server version details increases the attack surface by helping attackers fingerprint the server and match it with known exploits. This may lead to unauthorized access, service disruption, or data compromise, especially if the server is outdated or unpatched. It also reflects a lack of security hardening, which may affect compliance audits and institutional reputation.
+
+- **OWASP Reference:**  
+  - https://httpd.apache.org/docs/current/mod/core.html#servertokens
+  - https://learn.microsoft.com/en-us/previous-versions/msp-n-p/ff648552(v=pandp.10)
+  - https://www.troyhunt.com/shhh-dont-let-your-response-headers/
+
+- **Recommendation:**  
+  Suppress or remove the Server header from HTTP responses to prevent disclosing version information.
+
+- **Prevention Strategy:**  
+  - Disable version disclosure in the web server configuration.
+  - Use a reverse proxy (e.g., Nginx, Cloudflare) to filter and sanitize headers.
+  - Regularly update and patch web server software.
+  - Conduct periodic header audits using tools like curl, security scanners, or browser dev tools.
+    
+> **Responsible Team:** Backend Development 
+> **Target Remediation Date:** [YYYY-MM-DD]
+
 ## 4. Recommendations & Next Steps
 
-- Address **Critical** and **High** vulnerabilities **immediately**.
-- Re-test application after remediation.
-- Integrate secure coding standards.
-- Schedule periodic scans (e.g., monthly or post-deployment).
-- Consider a penetration test for in-depth analysis.
+- Prioritize fixing CSRF token absence and missing CSP header.
+- Add HttpOnly, Secure, and SameSite flags to all cookies.
+- Remove server version from HTTP headers and enable HSTS.
+- Perform a new vulnerability scan after fixes are applied.
+- Apply secure development practices in all future code.
+- Schedule monthly or post-update scans.
+- Penetration Testing: For deeper security validation.
 
 ---
 
 ## Appendix (Optional)
 
-- Scan configuration details  
-- List of all scanned URLs  
-- Full technical findings (for security team)
+**3.1 Absence of Anti-CSRF Tokens** 
+![image](https://github.com/user-attachments/assets/099920a4-78cf-414b-b85f-d7426b5ac0bc)
+
+**3.2 Content Security Policy (CSP) Header Not Set**
+![image](https://github.com/user-attachments/assets/1e9fae96-8986-427e-a606-b5be6581c8ec)
+
+**3.3 Cookie No HttpOnly FLag**
+![image](https://github.com/user-attachments/assets/da22618f-f741-453d-85f7-4167c5ec03e8)
+
+**3.4 Cookie Without Secure Flag **
+![image](https://github.com/user-attachments/assets/e6dcc764-dce7-44ec-9a2e-ed302c67fca1)
+
+**3.5 Server Leaks Version Information via "Server" HTTP Response Header Field**
+![image](https://github.com/user-attachments/assets/199b4d2b-3f62-4f7b-848d-bde3c2e7f745)
+
 
 ---
 
 **Prepared by:**  
-[Your Name]  
-[Your Role / Department]  
-[Email / Contact]  
-[Date]
+Husna Nadhirah
+Student Kuliyyah of Information Communication and Technology
+husnanadhirahedu@gamil.com
+23/6/2025
 
