@@ -1,3 +1,4 @@
+
 # Case Study: Vulnerability Assessment of IIUM HURIS Using OWASP ZAP
 # Web Application Vulnerability Scan Report
 
@@ -63,6 +64,7 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
 - **Prevention Strategy:**  
   - Generate unique tokens per session and include them in all POST requests.
   - Use frameworks like anti-CSRF packages such as the OWASP CSRFGuard
+  - Block requests without a valid token
 
 > **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
@@ -81,7 +83,7 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
   - https://huris.iium.edu.my/sitemap.xml
 
 - **Business Impact:**  
-  ...
+Without CSP, site is more vulnerable to Cross-Site Scripting (XSS) attacks. If a malicious script is injected, it can steal cookies, hijack sessions, or redirect users to phishing pages.
 
 - **OWASP Reference:**  
  - https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
@@ -91,7 +93,7 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
   Ensure that web server, application server, load balancer are configured to set the Content-Security-Policy header, which help reduce XSS risk.
 
 - **Prevention Strategy:**  
-  - ............
+  - Add header `Content-Security-Policy: default-src 'self'; script-src 'self';` under middleware
 
 > **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
@@ -108,7 +110,7 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
   - https://huris.iium.edu.my/irecruit/resources/styles/font-awesome/css/font-awesome.min.css;jsessionid=678E633A71FD51531C29C2DCA137A6A4
     
 - **Business Impact:**  
-  ...
+Generate the session ID in the URL like ;usersessionid=XYZ can leak user sessions through browser history, logs, or referrer headers. An attacker who gets this ID could hijack someone’s session even without security knowledge. 
 
 - **OWASP Reference:**  
  - https://seclists.org/webappsec/2002/q4/111
@@ -118,6 +120,8 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
 
 - **Prevention Strategy:**  
   - Use cookie-based session management instead of URL rewriting
+  - Use secure session cookies with short expiration
+  - Regenerate session ID after login or privilege changes
 
 > **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
@@ -133,16 +137,16 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
   - https://huris.iium.edu.my/sitemap.xml
     
 - **Business Impact:**  
-  ...
+Cookies without the Secure flag may be transmitted over unencrypted (HTTP) connections. If this happens, attackers on the same network can sniff and steal session cookies
 
 - **OWASP Reference:**  
  - https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes.html
 
 - **Recommendation:**  
-  Whenever a cookie contains sensitive information or is a session token, then it should always be passed using an encrypted channel. Ensure that the secure flag is set for cookies containing such sensitive information.
+Set the Secure flag on all cookies so they’re only sent over HTTPS
 
 - **Prevention Strategy:**  
-  - ..
+  - In backend or server settings, mark all cookies as `Set-Cookie: SESSIONID=abc123; Secure; HttpOnly; SameSite=Strict` 
 
 > **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
@@ -160,13 +164,13 @@ The scan detected 15 issues, with 5 medium, 5 low and 5 informational priority a
   - https://huris.iium.edu.my/irecruit/resources/spring/Spring-Dojo.js
     
 - **Business Impact:**  
-  ...
+Comments in HTML or JavaScript (e.g., <!-- TODO: remove debug -->) can expose sensitive logic, admin URLs, or unfinished code to attackers. These clues might help attackers plan their next move
 
 - **Recommendation:**  
  Remove all comments that return information that may help an attacker and fix any underlying problems they refer to
 
 - **Prevention Strategy:**  
-  - ..
+  - Do code reviews to check for leftover comments
 
 > **Responsible Team:** Backend Development 
 > **Target Remediation Date:** [YYYY-MM-DD]
