@@ -4,7 +4,9 @@
 
 **Tool Used:** OWASP ZAP  
 **Date of Scan:** 2025-06-21
+
 **Scanned By:** Irdeena Zahierah Binti Zukipeli
+
 **Target Application:** https://huris.iium.edu.my/irecruit  
 **Scan Type:** Passive 
 **Scan Duration:** 12:15 AM - 1:30 AM
